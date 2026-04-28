@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "dgSpecHash": "JhzfV7iiPw4=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Robin\\OneDrive\\Documents\\GitHub\\IntroMusic\\IntroMusic\\IntroMusic\\IntroMusic.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Robin\\.nuget\\packages\\emgu.cv\\4.12.0.5764\\emgu.cv.4.12.0.5764.nupkg.sha512",
+    "C:\\Users\\Robin\\.nuget\\packages\\emgu.cv.bitmap\\4.12.0.5764\\emgu.cv.bitmap.4.12.0.5764.nupkg.sha512",
+    "C:\\Users\\Robin\\.nuget\\packages\\emgu.cv.runtime.windows\\4.12.0.5764\\emgu.cv.runtime.windows.4.12.0.5764.nupkg.sha512",
+    "C:\\Users\\Robin\\.nuget\\packages\\emgu.runtime.windows.msvc.rt.arm64\\19.44.35214\\emgu.runtime.windows.msvc.rt.arm64.19.44.35214.nupkg.sha512",
+    "C:\\Users\\Robin\\.nuget\\packages\\emgu.runtime.windows.msvc.rt.x64\\19.44.35214\\emgu.runtime.windows.msvc.rt.x64.19.44.35214.nupkg.sha512",
+    "C:\\Users\\Robin\\.nuget\\packages\\emgu.runtime.windows.msvc.rt.x86\\19.44.35214\\emgu.runtime.windows.msvc.rt.x86.19.44.35214.nupkg.sha512",
+    "C:\\Users\\Robin\\.nuget\\packages\\microsoft.win32.systemevents\\9.0.0\\microsoft.win32.systemevents.9.0.0.nupkg.sha512",
+    "C:\\Users\\Robin\\.nuget\\packages\\naudio\\2.3.0\\naudio.2.3.0.nupkg.sha512",
+    "C:\\Users\\Robin\\.nuget\\packages\\naudio.asio\\2.3.0\\naudio.asio.2.3.0.nupkg.sha512",
+    "C:\\Users\\Robin\\.nuget\\packages\\naudio.core\\2.3.0\\naudio.core.2.3.0.nupkg.sha512",
+    "C:\\Users\\Robin\\.nuget\\packages\\naudio.midi\\2.3.0\\naudio.midi.2.3.0.nupkg.sha512",
+    "C:\\Users\\Robin\\.nuget\\packages\\naudio.wasapi\\2.3.0\\naudio.wasapi.2.3.0.nupkg.sha512",
+    "C:\\Users\\Robin\\.nuget\\packages\\naudio.winmm\\2.3.0\\naudio.winmm.2.3.0.nupkg.sha512",
+    "C:\\Users\\Robin\\.nuget\\packages\\system.drawing.common\\9.0.0\\system.drawing.common.9.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}
