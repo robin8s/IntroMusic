@@ -2,91 +2,164 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Media;
+using System.Linq;
 using Emgu.CV;
 using Emgu.CV.Face;
 using Emgu.CV.Structure;
+using Emgu.CV.Util;
+using NAudio.Wave;
 
-class FaceMusicPlayer
+class Program
 {
-    private static VideoCapture _capture;
-    private static LBPHFaceRecognizer _recognizer;
-    private static List<string> _names = new List<string>();
-    private static Dictionary<string, string> _musicDb = new Dictionary<string, string>();
-    private static string _lastPlayed = "";
+    
+    static VideoCapture _capture;
+    static LBPHFaceRecognizer _recognizer;
+    static CascadeClassifier _faceDetector;
+    static List<string> _labelNames = new List<string>();
+
+    static IWavePlayer _audioOutput;
+    static AudioFileReader _audioFile;
+    static string _currentlyPlaying = "";
 
     static void Main()
     {
-        // 1. Setup Database (Link names to music)
-        _musicDb.Add("Alice", "alice_theme.wav");
-        _musicDb.Add("Bob", "bob_song.wav");
+        
+        // 1. Find the Face Detector XML
+        string xmlPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "haarcascade_frontalface_default.xml");
+        if (!File.Exists(xmlPath))
+        {
+            Console.WriteLine("ERROR: haarcascade_frontalface_default.xml not found in output folder!");
+            return;
+        }
+        _faceDetector = new CascadeClassifier(xmlPath);
 
-        // 2. Train the Model
-        TrainModel();
+        // 2. Train the recognizer based on the 'People' folder
+        if (!TrainRecognizer()) return;
 
-        // 3. Setup Webcam
-        _capture = new VideoCapture(0); // '0' is default webcam
-        _capture.ImageGrabbed += ProcessFrame;
+        // 3. Start the Webcam
+        _capture = new VideoCapture(0);
+        _capture.ImageGrabbed += (s, e) => ProcessFrame();
         _capture.Start();
 
-        Console.WriteLine("System Active. Press Enter to stop.");
+        Console.WriteLine("System Active. Press Enter to quit.");
         Console.ReadLine();
     }
 
-    static void TrainModel()
+    static bool TrainRecognizer()
     {
-        _recognizer = new LBPHFaceRecognizer();
-        List<Image<Gray, byte>> trainingImages = new List<Image<Gray, byte>>();
-        List<int> labels = new List<int>();
+        string peoplePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "People");
+        if (!Directory.Exists(peoplePath)) Directory.CreateDirectory(peoplePath);
 
-        // Load images from a folder named 'TrainedFaces'
-        // Files should be named like: 0_Alice.jpg, 1_Bob.jpg
-        string[] files = Directory.GetFiles("./TrainedFaces", "*.jpg");
+        var faceImages = new List<Mat>();
+        var faceLabels = new List<int>();
+        _labelNames.Clear();
 
-        foreach (var file in files)
+        string[] folders = Directory.GetDirectories(peoplePath);
+        int id = 0;
+
+        foreach (var folder in folders)
         {
-            var name = Path.GetFileNameWithoutExtension(file).Split('_')[1];
-            if (!_names.Contains(name)) _names.Add(name);
+            string personName = Path.GetFileName(folder);
+            _labelNames.Add(personName);
 
-            trainingImages.Add(new Image<Gray, byte>(file).Resize(200, 200, Emgu.CV.CvEnum.Inter.Cubic));
-            labels.Add(_names.IndexOf(name));
+            foreach (var file in Directory.GetFiles(folder, "*.jpg"))
+            {
+                // Load image, convert to Grayscale, and resize to 200x200
+                var img = new Image<Gray, byte>(file).Resize(200, 200, Emgu.CV.CvEnum.Inter.Cubic);
+                faceImages.Add(img.Mat);
+                faceLabels.Add(id);
+            }
+            id++;
         }
 
-        _recognizer.Train(trainingImages.ToArray(), labels.ToArray());
+        if (faceImages.Count == 0)
+        {
+            Console.WriteLine("No training images found! Put .jpg photos in People/[Name] folders.");
+            return false;
+        }
+
+        _recognizer = new LBPHFaceRecognizer();
+        _recognizer.Train(new VectorOfMat(faceImages.ToArray()), new VectorOfInt(faceLabels.ToArray()));
+
+        Console.WriteLine($"Trained on {faceImages.Count} images for {_labelNames.Count} people.");
+        return true;
     }
 
-    static void ProcessFrame(object sender, EventArgs e)
+    static DateTime _lastPlayTime = DateTime.MinValue;
+
+    static void ProcessFrame()
     {
         Mat frame = new Mat();
         _capture.Retrieve(frame);
-        var grayFrame = frame.ToImage<Gray, byte>();
+        if (frame.IsEmpty) return;
 
-        // Detect face location
-        CascadeClassifier classifier = new CascadeClassifier("haarcascade_frontalface_default.xml");
-        Rectangle[] faces = classifier.DetectMultiScale(grayFrame, 1.1, 10);
+        var gray = frame.ToImage<Gray, byte>();
+        var faces = _faceDetector.DetectMultiScale(gray, 1.1, 10);
 
-        foreach (var face in faces)
+        if (faces.Length == 0)
         {
-            var result = _recognizer.Predict(grayFrame.Copy(face).Resize(200, 200, Emgu.CV.CvEnum.Inter.Cubic));
+            _currentlyPlaying = "";
+            return;
+        }
 
-            // result.Label is the ID, result.Distance is how confident it is (lower is better)
-            if (result.Label != -1 && result.Distance < 60)
+        foreach (var rect in faces)
+        {
+            var faceImg = gray.Copy(rect).Resize(200, 200, Emgu.CV.CvEnum.Inter.Cubic);
+            var result = _recognizer.Predict(faceImg);
+
+            if (result.Label != -1)
             {
-                string personName = _names[result.Label];
+                string name = _labelNames[result.Label];
 
-                if (_lastPlayed != personName)
+                // --- ALWAYS DISPLAY CONFIDENCE ---
+                // This stays outside the timer so you can see the numbers constantly
+                Console.WriteLine($"Detected: {name} | Confidence: {result.Distance:0.0}");
+
+                // --- MUSIC TRIGGER LOGIC WITH TIMER ---
+                bool isConfident = result.Distance < 85; // Adjust this number if needed
+                bool isNewPerson = _currentlyPlaying != name;
+                bool cooldownFinished = (DateTime.Now - _lastPlayTime).TotalSeconds >= 10;
+
+                if (isConfident && isNewPerson)
                 {
-                    Console.WriteLine($"Matched: {personName}");
-                    PlayMusic(_musicDb[personName]);
-                    _lastPlayed = personName;
+                    if (cooldownFinished)
+                    {
+                        Console.WriteLine($">>> [TRIGGER]: Cooldown over. Playing {name}'s music!");
+                        PlayMusic(name);
+                        _currentlyPlaying = name;
+                        _lastPlayTime = DateTime.Now; // Start the 10-second timer
+                    }
+                    else
+                    {
+                        // Optional: Tells you the system recognizes you but is waiting on the timer
+                        double secondsLeft = 10 - (DateTime.Now - _lastPlayTime).TotalSeconds;
+                        Console.WriteLine($"... Match found, but waiting on cooldown ({secondsLeft:0}s left) ...");
+                    }
                 }
             }
         }
     }
 
-    static void PlayMusic(string path)
+    static void PlayMusic(string name)
     {
-        SoundPlayer player = new SoundPlayer(path);
-        player.Play();
+        try
+        {
+            string musicPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Music", $"{name}.mp3");
+            if (!File.Exists(musicPath))
+            {
+                Console.WriteLine($"Music file not found for {name}");
+                return;
+            }
+
+            _audioOutput?.Stop();
+            _audioOutput?.Dispose();
+            _audioFile?.Dispose();
+
+            _audioOutput = new WaveOutEvent();
+            _audioFile = new AudioFileReader(musicPath);
+            _audioOutput.Init(_audioFile);
+            _audioOutput.Play();
+        }
+        catch (Exception ex) { Console.WriteLine("Audio error: " + ex.Message); }
     }
 }

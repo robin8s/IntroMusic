@@ -3,8 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\Robin\\OneDrive\\Documents\\GitHub\\IntroMusic\\IntroMusic\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7B46EDBA-A975-4CEB-B6E4-22906EE56B1E}|IntroMusic\\IntroMusic.csproj|c:\\users\\robin\\onedrive\\documents\\github\\intromusic\\intromusic\\intromusic\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7B46EDBA-A975-4CEB-B6E4-22906EE56B1E}|IntroMusic\\IntroMusic.csproj|solutionrelative:intromusic\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{CF464E94-C453-DFEA-4568-32DE0AA21CB0}|IntroMusic\\IntroMusic.csproj|c:\\users\\robin\\onedrive\\documents\\github\\intromusic\\intromusic\\intromusic\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CF464E94-C453-DFEA-4568-32DE0AA21CB0}|IntroMusic\\IntroMusic.csproj|solutionrelative:intromusic\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CF464E94-C453-DFEA-4568-32DE0AA21CB0}|IntroMusic\\IntroMusic.csproj|c:\\users\\robin\\onedrive\\documents\\github\\intromusic\\intromusic\\intromusic\\intromusic.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{CF464E94-C453-DFEA-4568-32DE0AA21CB0}|IntroMusic\\IntroMusic.csproj|solutionrelative:intromusic\\intromusic.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,8 +18,20 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "IntroMusic.csproj",
+              "DocumentMoniker": "C:\\Users\\Robin\\OneDrive\\Documents\\GitHub\\IntroMusic\\IntroMusic\\IntroMusic\\IntroMusic.csproj",
+              "RelativeDocumentMoniker": "IntroMusic\\IntroMusic.csproj",
+              "ToolTip": "C:\\Users\\Robin\\OneDrive\\Documents\\GitHub\\IntroMusic\\IntroMusic\\IntroMusic\\IntroMusic.csproj",
+              "RelativeToolTip": "IntroMusic\\IntroMusic.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-04-30T15:21:25.433Z"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -24,7 +40,7 @@
               "RelativeDocumentMoniker": "IntroMusic\\Program.cs",
               "ToolTip": "C:\\Users\\Robin\\OneDrive\\Documents\\GitHub\\IntroMusic\\IntroMusic\\IntroMusic\\Program.cs",
               "RelativeToolTip": "IntroMusic\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADoAAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAJAAAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-04-28T14:38:30.497Z",
               "EditorCaption": ""
